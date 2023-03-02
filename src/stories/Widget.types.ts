@@ -27,6 +27,7 @@ export interface BasicWidgetProps {
   getMetadataKeyName: string;
   getMetadatvalues: string[];
   setFilteredMetadataValues: Consumer<string[]>;
+  size: string;
 }
 
 export interface BasicWidget extends BaseWidget {

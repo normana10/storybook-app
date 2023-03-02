@@ -3,6 +3,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { TestHarness } from "./TestHarness";
 import { mapWidget } from "./MapWidget";
 import { listWidget } from "./listWidget";
+import { EChartWidget as eChartWidget } from "./echarts";
 
 export default {
   component: TestHarness,
@@ -10,7 +11,7 @@ export default {
     dataSetId: "example",
   },
   argTypes: {
-    widgets: {
+    widgetsWithIds: {
       table: {
         disable: true,
       },
@@ -22,5 +23,9 @@ const Template: ComponentStory<typeof TestHarness> = (args) => <TestHarness {...
 
 export const Default = Template.bind({});
 Default.args = {
-  widgets: [mapWidget, mapWidget, listWidget],
+  widgetsWithIds: [
+    { id: "mapWidget", ...mapWidget },
+    { id: "listWidget", ...listWidget },
+    { id: "eChartWidget", ...eChartWidget },
+  ],
 };

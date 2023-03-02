@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React, { FC, useState } from "react";
 import { findRenderedComponentWithType } from "react-dom/test-utils";
 import ReactGridLayout, { Layout, WidthProvider } from "react-grid-layout";
@@ -15,15 +16,18 @@ export enum Environment {
   PROD = "PROD",
 }
 
+type WidgetWithId = Widget & {
+  id: string;
+};
+
 type TestHarnessProps = {
   environment: Environment;
   dataSetId: string;
-  widgets: Widget[];
+  widgetsWithIds: WidgetWithId[];
 };
+// const widgetsWithIds = widgets.map((widget) => ({ ...widget, id: crypto.randomUUID() }));
 
-export const TestHarness = ({ widgets }: TestHarnessProps) => {
-  const widgetsWithIds = widgets.map((widget) => ({ ...widget, id: crypto.randomUUID() }));
-
+export const TestHarness = ({ widgetsWithIds }: TestHarnessProps) => {
   // Basic
   const getMetadataKeyName = "metadataKeyName";
   const getMetadatvalues = ["getMetadatvalues"];
@@ -43,7 +47,7 @@ export const TestHarness = ({ widgets }: TestHarnessProps) => {
 
   //TODO: Fetch Data
 
-  const layout = widgetsWithIds.map((widget) => ({
+  const layout: Layout[] = widgetsWithIds.map((widget) => ({
     i: widget.id,
     x: 0,
     y: 0,
@@ -51,18 +55,25 @@ export const TestHarness = ({ widgets }: TestHarnessProps) => {
     h: 9,
     minw: 2,
     minH: 3,
-  })) satisfies Layout[];
+  }));
+
+  const [postLayout, setPostLayout] = useState(layout);
 
   return (
     <ReactGridLayout
-      layout={layout}
+      layout={postLayout}
+      onLayoutChange={(newLayout) => {
+        if (!_.isEqual(postLayout, newLayout)) {
+          setPostLayout(newLayout);
+        }
+      }}
       cols={10}
       rowHeight={30}
       width={1000}
       draggableHandle={".draggableClass"}
       compactType={null}
     >
-      {widgetsWithIds.map(({ id, title, type, Component }) => (
+      {widgetsWithIds.map(({ id, title, type, Component }, idx) => (
         <div key={id} className="outerDiv">
           <div className="innerDiv">
             <p className="draggableClass">{title} (Drag Here)</p>
@@ -74,6 +85,7 @@ export const TestHarness = ({ widgets }: TestHarnessProps) => {
                 setFilteredMetadataValues={(filteredMetadataValues) =>
                   setFilteredMetadataValues(filteredMetadataValues)
                 }
+                size={`${postLayout[idx].h}:${postLayout[idx].w}`}
               />
             ) : (
               <Component
