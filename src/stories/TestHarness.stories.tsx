@@ -4,6 +4,7 @@ import { TestHarness } from "./TestHarness";
 import { mapWidget } from "./MapWidget";
 import { listWidget } from "./listWidget";
 import { EChartWidget as eChartWidget } from "./echarts";
+import { dudWidget } from "./dudWidget";
 
 export default {
   component: TestHarness,
@@ -17,15 +18,24 @@ export default {
       },
     },
   },
+  parameters: {
+    layout: "fullscreen",
+  },
 } satisfies ComponentMeta<typeof TestHarness>;
 
-const Template: ComponentStory<typeof TestHarness> = (args) => <TestHarness {...args} />;
+const Template: ComponentStory<typeof TestHarness> = (args) => (
+  <div style={{ display: "flex", height: "100vh" }}>
+    <TestHarness {...args} />
+  </div>
+);
 
 export const Default = Template.bind({});
 Default.args = {
   widgetsWithIds: [
+    { id: "dudWidget", ...dudWidget },
     { id: "mapWidget", ...mapWidget },
     { id: "listWidget", ...listWidget },
-    { id: "eChartWidget", ...eChartWidget },
+    { id: "eChartWidget1", ...eChartWidget },
+    { id: "eChartWidget2", ...eChartWidget },
   ],
 };
